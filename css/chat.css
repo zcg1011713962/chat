@@ -1,0 +1,9 @@
+ul {
+    list-style: none;
+    overflow:auto;
+}
+li {
+    border: yellowgreen solid 1px;
+    padding: 10px;
+    margin-bottom: 10px;
+}

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>chatgpt机器人</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/chat.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            <div class="panel panel-primary">
+                <!--窗体头部-->
+                <div class="panel-heading clearfix">
+                    <div class="pull-left">
+                        <span class="glyphicon glyphicon-comment"></span> Chat
+                    </div>
+                    <div class="pull-right">
+                        <button class="btn btn-warning btn-sm float-right" id="changeBtn">问题咨询模式</button>
+                        <button class="btn-success btn-sm float-right" id="clearBtn">清空</button>
+                    </div>
+                </div>
+                <!--窗体消息-->
+                <!--vh是视窗的高度单位，即1vh等于视窗高度的1%。可以用来指定元素的高度或宽度相对于视口的百分比。-->
+                <div class="panel-body" style="height: 80vh;">
+                    <ul class="list-group" id="content-ul" style="height: 80vh;">
+                    </ul>
+                </div>
+                <!--窗体发送框-->
+                <div class="panel-footer">
+                    <div class="input-group">
+                        <input id="btn-input" type="text" class="form-control input-sm"
+                               placeholder="Type your message here...">
+                        <span class="input-group-btn">
+                                    <button class="btn btn-warning btn-sm" id="chatBtn">
+                                        Send</button>
+                                </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--弹出模态框-->
+    <div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="alertModalLabel"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>模态框内容</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="js/chat.js"></script>
+<script src="js/private.js"></script>
+</body>
+</html>
