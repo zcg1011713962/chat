@@ -1,23 +1,36 @@
+// 接口地址 鉴权
 var api_address;
 var token;
+// 支持模式
+const CHAT = Object.freeze({
+    txt: '问题咨询模式',
+    image: '图像生成模式'
+})
+const INPUT = Object.freeze({
+    txt: '在此处输入要咨询的问题，点击发送按钮',
+    image: '在此输入图像关键字，点击发送按钮'
+})
+// 模型
+const MODEL = Object.freeze({
+    default: 'gpt-3.5-turbo'
+})
+// 图片大小
+const IMAGE = Object.freeze({
+    small: '256x256',
+    middle: '512x512',
+    big: '1024x1024'
+})
 
-// 显示告警模态框, title为模态框标题，message为模态框内容
-var alertModal = $('#alertModal');
-function showAlertModal(title, message) {
-    alertModal.find('.modal-title').text(title);
-    alertModal.find('.modal-body p').text(message);
-    alertModal.modal('show');
-}
+// 按钮发送
+$("#chatBtn").click(function () {
+    send();
+});
 // 回车发送
 $(document).keypress(function(event) {
     if (event.which === 13) {
         event.preventDefault();
         send();
     }
-});
-// 按钮发送
-$("#chatBtn").click(function () {
-    send();
 });
 // 按钮清理
 $('#clearBtn').click(function () {
@@ -26,12 +39,30 @@ $('#clearBtn').click(function () {
 // 更改模式
 $('#changeBtn').click(function () {
     var value = $(this).text()
-    if (value === "问题咨询模式") {
-        $(this).css('background-color', 'red').text('图像生成模式');
+    if (value === CHAT.image) {
+        $(this).css('background-color', '#f0ad4e').text(CHAT.txt);
+        $('#btn-input').attr('placeholder', INPUT.txt);
     } else {
-        $(this).css('background-color', '#f0ad4e').text('问题咨询模式');
+        $(this).css('background-color', 'red').text(CHAT.image);
+        $('#btn-input').attr('placeholder', INPUT.image);
     }
 });
+
+// 显示图片模态框
+function showimageModal(src) {
+    var imageModal = $('#imageModal');
+    imageModal.find('.modal-body img').attr('src', src);
+    imageModal.modal('show');
+}
+
+// 显示告警模态框, title为模态框标题，message为模态框内容
+function showAlertModal(title, message) {
+    var alertModal = $('#alertModal');
+    alertModal.find('.modal-title').text(title);
+    alertModal.find('.modal-body p').text(message);
+    alertModal.modal('show');
+}
+
 
 function isEmpty(value) {
     return value == null || value === '' || value === 0;
@@ -39,6 +70,18 @@ function isEmpty(value) {
 function isNotEmpty(value) {
     return value == null && value === '' && value === 0;
 }
+// 图片点击
+function imageClick(img) {
+    //获取图片的src
+    var src = $(img).attr('src');
+    showimageModal(src);
+}
+//下载图片
+$('#imagedownload').click(function () {
+    var src = $('#create-image').attr('src');
+    console.log("下载图片"+ src);
+});
+
 
 function send(){
     if(isEmpty(token)){
@@ -52,7 +95,7 @@ function send(){
             '<p class="text-left" style="margin-left: 10px; font-size: 16px;">' + question + '</p></li>';
         $('#content-ul').append(q_li);
         var value = $('#changeBtn').text();
-        if(value === "图像生成模式"){
+        if(value === CHAT.image){
             imagesRequest(question);
         }else{
             textRequest(question);
@@ -75,14 +118,14 @@ function imagesRequest(question) {
         data: JSON.stringify({
             "prompt": question,
             "n": 1,
-            "size": "1024x1024"
+            "size": IMAGE.big
         }),
         success: function(response) {
             var imageSrc = response.data[0].url;
             console.log(imageSrc);
             var a_li = '<li style="display: flex;">' +
                 '<img class="img-responsive" src="images/ai.png" alt="Avatar" style="width: 50px; height: 50px;">' +
-                '<img class="img-responsive" src="'+ imageSrc +'"alt="Avatar"></li>';
+                '<img class="img-responsive thumbnail" onclick="imageClick(this)" src="'+ imageSrc +'"alt="Avatar" style="width: 255px; height: 255px;"></li>';
             $('#content-ul').append(a_li);
         },
         error: function(error) {
@@ -105,7 +148,7 @@ function textRequest(question) {
             'Authorization': 'Bearer ' + token
         },
         data: JSON.stringify({
-            "model": "gpt-3.5-turbo",
+            "model": MODEL.default,
             "messages": [
                 {
                     "role": "user",
@@ -131,6 +174,15 @@ function textRequest(question) {
         }
     });
 }
+
+function jsonp(url, callback) {
+    let script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = url + '?callback=' + callback;
+    document.head.appendChild(script);
+}
+
+
 
 
 
