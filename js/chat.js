@@ -91,7 +91,7 @@ function send(){
     var question = $('#btn-input').val().trim();
     if (question) {
         var q_li = '<li style="display: flex;">' +
-            '<img class="img-responsive" src="images/git.jpg" alt="Avatar" style="width: 50px; height: 50px;">' +
+            '<img class="img-responsive" src="images/git50.jpg" alt="Avatar" style="width: 50px; height: 50px;">' +
             '<p class="text-left" style="margin-left: 10px; font-size: 16px;">' + question + '</p></li>';
         $('#content-ul').append(q_li);
         var value = $('#changeBtn').text();
@@ -100,7 +100,7 @@ function send(){
         }else{
             textRequest(question);
         }
-        $('#btn-input').val('');
+        $('#btn-input').val(''); // 清空输入框
     } else {
         showAlertModal('输入框校验', '请检查输入是否正确');
     }
@@ -121,12 +121,9 @@ function imagesRequest(question) {
             "size": IMAGE.big
         }),
         success: function(response) {
-            var imageSrc = response.data[0].url;
-            console.log(imageSrc);
-            var a_li = '<li style="display: flex;">' +
-                '<img class="img-responsive" src="images/ai.png" alt="Avatar" style="width: 50px; height: 50px;">' +
-                '<img class="img-responsive thumbnail" onclick="imageClick(this)" src="'+ imageSrc +'"alt="Avatar" style="width: 255px; height: 255px;"></li>';
-            $('#content-ul').append(a_li);
+            console.log(response);
+            appendImage(response);
+            scrollHeight();
         },
         error: function(error) {
             console.log(error);
@@ -157,30 +154,43 @@ function textRequest(question) {
             ]
         }),
         success: function(response) {
-            var content = response.choices[0].message.content;
-            var answers = marked.parse(content);
-            console.log(answers);
-            var a_li = '<li style="display: flex;">' +
-                '<img class="img-responsive" src="images/ai.png" alt="Avatar" style="width: 50px; height: 50px;">' +
-                '<code id="markdown">' + answers + '</code></li>';
-            $('#content-ul').append(a_li);
+            console.log(response);
+            appendText(response);
+            scrollHeight();
         },
         error: function(error) {
             console.log(error);
             var er = '<li style="display: flex;">' +
-                '<img class="img-responsive" src="images/ai.png" alt="Avatar" style="width: 50px; height: 50px;">' +
+                '<img class="img-responsive" src="images/ai50.png" alt="Avatar" style="width: 50px; height: 50px;">' +
                 '<p class="text-left py-5" style="margin-left: 10px; font-size: 16px;">' + error + '</p></li>';
             $('#content-ul').append(er);
         }
     });
 }
 
-function jsonp(url, callback) {
-    let script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = url + '?callback=' + callback;
-    document.head.appendChild(script);
+function appendImage(response){
+    var imageSrc = response.data.data[0].url;
+    var a_li = '<li style="display: flex;">' +
+        '<img class="img-responsive" src="images/ai50.png" alt="Avatar" style="width: 50px; height: 50px;">' +
+        '<img class="img-responsive thumbnail" onclick="imageClick(this)" src="'+ imageSrc +'"alt="Avatar" style="width: 255px; height: 255px;"></li>';
+    $('#content-ul').append(a_li);
 }
+
+function appendText(response){
+    var content = response.data.choices[0].message.content;
+    var answers = marked.parse(content);
+    var a_li = '<li style="display: flex;">' +
+        '<img class="img-responsive" src="images/ai50.png" alt="Avatar" style="width: 50px; height: 50px;">' +
+        '<code id="markdown">' + answers + '</code></li>';
+    $('#content-ul').append(a_li);
+}
+
+function scrollHeight(){
+    var $ul = $('#content-ul'); // 通过id获取ul
+    $ul.scrollTop($ul[0].scrollHeight); // 让滚动条自动下拉到最底部
+}
+
+
 
 
 
