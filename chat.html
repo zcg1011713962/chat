@@ -2,85 +2,95 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>chatgpt机器人</title>
+    <title>chatgpt-chat</title>
+    <link rel="shortcut icon" href="images/ai50.png" type="image/x-icon">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/chat.css">
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
-<div class="container">
+<div class="container-fluid">
     <div class="row">
-        <div class="col-md-10 col-md-offset-1">
-            <div class="panel panel-primary">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-10">
+            <div class="card">
                 <!--窗体头部-->
-                <div class="panel-heading clearfix">
-                    <div class="pull-left">
-                        <i class="fa fa-comments" aria-hidden="true"></i> Chat
+                <div class="card-header bg-primary">
+                    <div class="pull-left col-md-6">
+                        <i class="fa fa-comments bg-gradient" aria-hidden="true"></i> Chat
+                    </div>
+                    <div class="pull-left col-md-2">
+                        <p class="badge bg-secondary">系统时间: <span id="current-time"></span></p>
+                    </div>
+                    <div class="pull-left col-md-1">
+                        <p class="badge bg-secondary">访问量: <span id="website-visits"></span></p>
                     </div>
                     <div class="pull-right">
-                        <button class="btn btn-warning btn-sm float-right" id="changeBtn">问题咨询模式</button>
-                        <button class="btn-success btn-sm float-right" id="clearBtn">清空</button>
+                        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                            <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked="" value="图像生成">
+                            <label class="btn btn-outline-info" for="btnradio1">图像生成</label>
+                            <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" checked="" value="文本咨询">
+                            <label class="btn btn-outline-info" for="btnradio2">文本咨询</label>
+                            <button class="btn btn-success btn float-right" id="clearBtn">清空</button>
+                        </div>
                     </div>
                 </div>
                 <!--窗体消息-->
-                <!--vh是视窗的高度单位，即1vh等于视窗高度的1%。可以用来指定元素的高度或宽度相对于视口的百分比。-->
-                <div class="panel-body" style="height: 80vh;">
-                    <ul class="list-group" id="content-ul" style="height: 80vh;">
+                <div class="card-body content-card-body">
+                    <ul id="content-ul"  class="content-ul" style="height: 70vh;">
                     </ul>
                 </div>
                 <!--窗体发送框-->
-                <div class="panel-footer">
-                    <div class="input-group">
-                        <input id="btn-input" type="text" class="form-control input-sm"
-                               placeholder="在此处输入要咨询的问题，点击发送按钮">
-                        <span class="input-group-btn">
-                                    <button class="btn btn-warning btn-sm" id="chatBtn">
-                                        发送</button>
-                                </span>
+                <div class="card-footer">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="btn-input" placeholder="在此处输入要咨询的问题，点击发送按钮" >
+                        <button class="btn btn-primary" type="button" id="chatBtn" >发送</button>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!--弹出告警模态框-->
-    <div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="alertModalLabel"></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>模态框内容</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!--弹出图片模态框-->
-    <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <a href="#" id ='imagedownload' class="btn btn-primary mt-3">下载</a>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <img src="" alt="图片" id="create-image" class="img-responsive modal-img">
                 </div>
             </div>
         </div>
     </div>
 </div>
+<!--弹出告警模态框-->
+<div class="modal" id="alertModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title text-white">校验框</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"></span>
+                </button>
+            </div>
+            <div class="modal-body bg-body">
+                <p>请检查输入是否正确/p>
+            </div>
+            <div class="modal-footer bg-primary">
+                <button type="button" class="btn btn-warning" data-bs-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--弹出图片模态框-->
+<div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="#" id='imagedownload' class="btn btn-primary mt-3">下载</a>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img src="" alt="图片" id="create-image" class="img-responsive modal-img">
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="js/marked.min.js"></script>
 <script src="js/chat.js"></script>
 <script src="js/private.js"></script>

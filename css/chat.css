@@ -1,9 +1,38 @@
-ul {
-    list-style: none;
-    overflow:auto;
+.row-no-gutters {
+    margin-right: 0;
+    margin-left: 0;
 }
-li {
+
+.content-ul {
+    list-style: none;
+    overflow: auto;
+}
+
+.content-ul li {
+    display: flex;
     border: yellowgreen solid 1px;
     padding: 10px;
     margin-bottom: 10px;
+}
+
+code p {
+    margin-left: 10px;
+}
+
+.content-card-body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+}
+
+/*滚动条*/
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
 }

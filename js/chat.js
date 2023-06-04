@@ -3,8 +3,8 @@ var api_address;
 var token;
 // 支持模式
 const CHAT = Object.freeze({
-    txt: '问题咨询模式',
-    image: '图像生成模式'
+    txt: '文本咨询',
+    image: '图像生成'
 })
 const INPUT = Object.freeze({
     txt: '在此处输入要咨询的问题，点击发送按钮',
@@ -36,16 +36,31 @@ $(document).keypress(function(event) {
 $('#clearBtn').click(function () {
     $('#content-ul').empty();
 });
-// 更改模式
-$('#changeBtn').click(function () {
-    var value = $(this).text()
-    if (value === CHAT.image) {
-        $(this).css('background-color', '#f0ad4e').text(CHAT.txt);
-        $('#btn-input').attr('placeholder', INPUT.txt);
-    } else {
-        $(this).css('background-color', 'red').text(CHAT.image);
-        $('#btn-input').attr('placeholder', INPUT.image);
-    }
+
+$(function(){
+    // 展示时间
+    setInterval(function() {
+        let currentTime = new Date();
+        $('#current-time').text(currentTime.toLocaleTimeString());
+    }, 1000);
+
+    // 展示访问量
+    setInterval(function() {
+        $.ajax({
+            url: api_address + "/v1/chat/count",
+            type: 'GET',
+            success: function(response) {
+                if(response.code === 200){
+                    $('#website-visits').text(response.data.count);
+                }
+            }
+        });
+    }, 1000);
+    // 切换模式
+    $('input[name="btnradio"]').on('change', function(){
+        var checkedValue = $('input[name="btnradio"]:checked').val();
+        console.log(checkedValue);
+    });
 });
 
 // 显示图片模态框
@@ -82,6 +97,8 @@ $('#imagedownload').click(function () {
     console.log("下载图片"+ src);
 });
 
+var errorContent = '<li><img class="img-responsive" src="images/ai50.png" alt="Avatar" style="width: 50px; height: 50px;"><p class="text-left">哎呀，出错了 请稍后再试</p></li>';
+
 
 function send(){
     if(isEmpty(token)){
@@ -90,11 +107,11 @@ function send(){
     }
     var question = $('#btn-input').val().trim();
     if (question) {
-        var q_li = '<li style="display: flex;">' +
+        var q_li = '<li>' +
             '<img class="img-responsive" src="images/git50.jpg" alt="Avatar" style="width: 50px; height: 50px;">' +
-            '<p class="text-left" style="margin-left: 10px; font-size: 16px;">' + question + '</p></li>';
+            '<p class="text-left">' + question + '</p></li>';
         $('#content-ul').append(q_li);
-        var value = $('#changeBtn').text();
+        var value = $('input[name="btnradio"]:checked').val();
         if(value === CHAT.image){
             imagesRequest(question);
         }else{
@@ -126,11 +143,8 @@ function imagesRequest(question) {
             scrollHeight();
         },
         error: function(error) {
-            console.log(error);
-            var er = '<li style="display: flex;">' +
-                '<img class="img-responsive" src="images/ai.png" alt="Avatar" style="width: 50px; height: 50px;">' +
-                '<p class="text-left py-5" style="margin-left: 10px; font-size: 16px;">' + error + '</p></li>';
-            $('#content-ul').append(er);        }
+            $('#content-ul').append(errorContent);
+        }
     });
 }
 
@@ -159,28 +173,36 @@ function textRequest(question) {
             scrollHeight();
         },
         error: function(error) {
-            console.log(error);
-            var er = '<li style="display: flex;">' +
-                '<img class="img-responsive" src="images/ai50.png" alt="Avatar" style="width: 50px; height: 50px;">' +
-                '<p class="text-left py-5" style="margin-left: 10px; font-size: 16px;">' + error + '</p></li>';
-            $('#content-ul').append(er);
+            $('#content-ul').append(errorContent);
         }
     });
 }
 
 function appendImage(response){
-    var imageSrc = response.data.data[0].url;
-    var a_li = '<li style="display: flex;">' +
+    var as;
+    if(response.code !== 200){
+        console.log(response.message);
+        as = '哎呀，出错了 请稍后再试';
+    }else{
+        as = response.data.data[0].url;
+    }
+    var a_li = '<li>' +
         '<img class="img-responsive" src="images/ai50.png" alt="Avatar" style="width: 50px; height: 50px;">' +
-        '<img class="img-responsive thumbnail" onclick="imageClick(this)" src="'+ imageSrc +'"alt="Avatar" style="width: 255px; height: 255px;"></li>';
+        '<img class="img-responsive thumbnail" onclick="imageClick(this)" src="'+ as +'"alt="图片走丢了" style="width: 255px; height: 255px;"></li>';
     $('#content-ul').append(a_li);
 }
 
 function appendText(response){
-    var content = response.data.choices[0].message.content;
-    var answers = marked.parse(content);
-    var a_li = '<li style="display: flex;">' +
-        '<img class="img-responsive" src="images/ai50.png" alt="Avatar" style="width: 50px; height: 50px;">' +
+    var answers;
+    if(response.code !== 200){
+        console.log(response.message);
+        answers = '哎呀，出错了 请稍后再试';
+    }else{
+        var content = response.data.choices[0].message.content;
+        answers = marked.parse(content);
+    }
+    var a_li = '<li>' +
+        '<img class="img-responsive" src="images/ai50.png" alt="图片走丢了" style="width: 50px; height: 50px;">' +
         '<code id="markdown">' + answers + '</code></li>';
     $('#content-ul').append(a_li);
 }
