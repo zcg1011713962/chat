@@ -109,7 +109,7 @@ function send(){
     if (question) {
         var q_li = '<li>' +
             '<img class="img-responsive" src="images/git50.jpg" alt="Avatar" style="width: 50px; height: 50px;">' +
-            '<p class="text-left">' + question + '</p></li>';
+            '<p style="padding-left: 10px">' + question + '</p st></li>';
         $('#content-ul').append(q_li);
         var value = $('input[name="btnradio"]:checked').val();
         if(value === CHAT.image){
