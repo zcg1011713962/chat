@@ -55,7 +55,7 @@ $(function(){
                 }
             }
         });
-    }, 1000);
+    }, 10000);
     // 切换模式
     $('input[name="btnradio"]').on('change', function(){
         var checkedValue = $('input[name="btnradio"]:checked').val();
@@ -82,9 +82,7 @@ function showAlertModal(title, message) {
 function isEmpty(value) {
     return value == null || value === '' || value === 0;
 }
-function isNotEmpty(value) {
-    return value == null && value === '' && value === 0;
-}
+
 // 图片点击
 function imageClick(img) {
     //获取图片的src
@@ -198,7 +196,13 @@ function appendText(response){
         console.log(response.message);
         answers = '哎呀，出错了 请稍后再试';
     }else{
-        var content = response.data.choices[0].message.content;
+        var content;
+        if(response.data.error === undefined){
+            content = response.data.choices[0].message.content;
+        }else{
+            console.log(response.data.error);
+            content = response.data.error.message;
+        }
         answers = marked.parse(content);
     }
     var a_li = '<li>' +
